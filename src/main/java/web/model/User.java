@@ -14,8 +14,8 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "userName")
-    private String userName;
+    @Column(name = "username")
+    private String username;
 
     @Column(name = "firstName")
     private String firstName;
@@ -29,7 +29,7 @@ public class User implements UserDetails {
     @Transient
     private String confirmPassword;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
@@ -42,14 +42,6 @@ public class User implements UserDetails {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public String getFirstName() {
@@ -66,14 +58,6 @@ public class User implements UserDetails {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public void setConfirmPassword(String confirmPassword) {
@@ -99,7 +83,11 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userName;
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
@@ -123,7 +111,16 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String toString() {
-        return getClass().getSimpleName() + " (id:" + id + " username:" + userName + "firstname" + firstName + " lastname:" + lastName + ")";
+    public String getPassword() {
+        return password;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+ /*   @Override
+    public String toString() {
+        return getClass().getSimpleName() + " (id:" + id + " username:" + username + "firstname" + firstName + " lastname:" + lastName + ")";
+    }*/
 }

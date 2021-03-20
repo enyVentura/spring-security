@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import web.model.Role;
 import web.model.User;
 import web.repository.RoleRepository;
@@ -16,55 +15,100 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import javax.transaction.Transactional;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
-    @PersistenceContext
+ @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    UserRepository userRepository;
 
-    @Autowired
+    private UserRepository userRepository;
     RoleRepository roleRepository;
-
-    //@Autowired
     BCryptPasswordEncoder cryptPasswordEncoder;
 
-    public UserService() {
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public User findByUserName(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    @Transactional
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = findByUserName(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("User '$s' not found", username));
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+                mapRolesToAuthorities(user.getRoles()));
+    }
+
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
     }
 
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    public User findById(Long id) {
+    public void deleteById(Long userId) {
+        userRepository.deleteById(userId);
+
+
+
+
+
+
+ /*public User findById(Long id) {
         Optional<User> userFromDB= userRepository.findById(id);
         return userFromDB.orElse(new User());
     }
 
+
     public void save(User user) {
+        user.setRoles(Collections.singleton(new Role(1L,"ROLE_USER")));
         user.setPassword(cryptPasswordEncoder.encode(user.getPassword()));
-        Set<Role> roles=new HashSet<>();
-        roles.add(roleRepository.getOne(1L));
-        user.setRoles(roles);
         userRepository.save(user);
+       // return true;
     }
 
-    public boolean deleteById(Long id) {
-        if (userRepository.findById(id).isPresent()){
-            userRepository.deleteById(id);
-            return true;
+
+public User save(User user) {
+        user.setPassword(cryptPasswordEncoder.encode(user.getPassword()));
+        //user.setActive(true);
+       // Role userRole = roleRepository.findByRole("ADMIN");
+        user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+        return userRepository.save(user);
+    }
+
+
+    private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
+        Set<GrantedAuthority> roles = new HashSet<>();
+        for (Role role : userRoles) {
+            roles.add(new SimpleGrantedAuthority(role.getName()));
         }
-        return false;
+        return new ArrayList<>(roles);
     }
 
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+
+    private UserDetails buildUserForAuthentication(User user, List<GrantedAuthority> authorities) {
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),true, true, true, true, authorities);
+    }
+*/
+
+
+
+ public List<User> userList(Long id){
+        return entityManager.createQuery("SELECT u FROM User u WHERE u.id > :paramId",User.class).setParameter("paramId",id).getResultList();
+    }
+
     }
 }

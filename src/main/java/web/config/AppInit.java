@@ -6,13 +6,13 @@ public class AppInit extends AbstractAnnotationConfigDispatcherServletInitialize
     // Метод, указывающий на класс конфигурации
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{HibernateConfig.class,SecurityConfig.class};
+        return  null;
     }
 
     // Добавление конфигурации, в которой инициализируем ViewResolver, для корректного отображения jsp.
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{
+        return new Class<?>[]{
                 WebConfig.class
         };
     }

@@ -6,38 +6,51 @@
   To change this template use File | Settings | File Templates.
 --%>
 
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Admin</title>
-
-    <link href="${contextPath}/resources/css/bootstrap.min.css" rel="stylesheet">
+    <title>Log in with your account</title>
+    <style>table th, table td {padding: 5px;}</style>
 </head>
 
 <body>
-<div class="container">
-    <c:if test="${pageContext.request.userPrincipal.name != null}">
-        <form id="logoutForm" method="post" action="${contextPath}/logout">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-        </form>
-        <h2>Admin Page ${pageContext.request.userPrincipal.name} | <a onclick="document.forms['logoutForm'].submit()">Logout</a>
-        </h2>
-    </c:if>
+<div>
+    <table>
+        <thead>
+        <th>ID</th>
+        <th>UserName</th>
+        <th>Password</th>
+        <th>FirstName</th>
+        <th>LastName</th>
+        <th>Roles</th>
+        </thead>
+        <c:forEach items="${allUsers}" var="user">
+            <tr>
+                <td>${user.id}</td>
+                <td>${user.username}</td>
+                <td>${user.password}</td>
+                <td>${user.firstName}</td>
+                <td>${user.lastName}</td>
+                <td>
+                    <c:forEach items="${user.roles}" var="role">${role.name}; </c:forEach>
+                </td>
+
+                <td>
+                    <form action="${pageContext.request.contextPath}/admin" method="post">
+                        <input type="hidden" name="userId" value="${user.id}"/>
+                        <input type="hidden" name="action" value="delete"/>
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        </c:forEach>
+    </table>
+    <a href="/">Главная</a>
 </div>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="${contextPath}/resources/js/bootstrap.min.js"></script>
-
 </body>
 </html>
+

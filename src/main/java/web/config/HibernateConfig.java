@@ -14,11 +14,15 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
+import web.service.UserService;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
+
 
 @Configuration
 @ComponentScan(basePackages = "web")
@@ -26,8 +30,38 @@ import java.util.Properties;
 @PropertySource(value = "classpath:application.properties")
 public class HibernateConfig {
 
-    private static final Logger logger=LoggerFactory.getLogger(HibernateConfig.class);
+private UserService userService;
 
+@Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider(){
+        DaoAuthenticationProvider authenticationProvider=new DaoAuthenticationProvider();
+        authenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
+        authenticationProvider.setUserDetailsService(userService);
+        return authenticationProvider;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    private static final Logger logger = LoggerFactory.getLogger(HibernateConfig.class);
     private Environment environment;
 
     @Autowired
@@ -54,8 +88,8 @@ public class HibernateConfig {
             dataSource.setPassword(environment.getRequiredProperty("jdbc.password"));
             logger.info("DataSource created");
             return dataSource;
-        }catch (Throwable e){
-            logger.error("Embedded DataSource bean cannot bе created!",e);
+        } catch (Throwable e) {
+            logger.error("Embedded DataSource bean cannot bе created!", e);
             return null;
         }
     }
