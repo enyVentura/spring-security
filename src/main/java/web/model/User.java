@@ -30,7 +30,7 @@ public class User implements UserDetails {
     private String confirmPassword;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles",joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     public User() {
@@ -119,8 +119,8 @@ public class User implements UserDetails {
         this.password = password;
     }
 
- /*   @Override
+    @Override
     public String toString() {
         return getClass().getSimpleName() + " (id:" + id + " username:" + username + "firstname" + firstName + " lastname:" + lastName + ")";
-    }*/
+    }
 }

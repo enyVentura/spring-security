@@ -4,8 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Page</title>
-    <style>table th, table td {padding: 5px;}</style>
+    <style>table th, table td {
+        padding: 5px;
+    }</style>
 </head>
+
 <body>
 <h1>Users:</h1>
 <table border="1">
@@ -15,6 +18,7 @@
         <th>First Name</th>
         <th>Last Name</th>
         <th>Action</th>
+        <th>Action</th>
     </tr>
 
     <tr th:each="User, state : ${allUsers}">
@@ -23,24 +27,27 @@
         <td th:utext="${User.firstName}">First Name</td>
         <td th:utext="${User.lastName}">Last Name</td>
         <td>
-            <form action="${pageContext.request.contextPath}" method="post">
-            <input type="hidden" name="userId" value="${user.id}"/>
-            <input type="hidden" name="action" value="delete"/>
-            <button type="submit">Delete</button>
+            <form action="${pageContext.request.contextPath}/admin" method="post">
+                <input type="hidden" name="userId" value="${user.id}"/>
+                <input type="hidden" name="action" value="edit"/>
+                <button type="submit">Edit</button>
+            </form>
+        </td>
+        <td>
+            <form action="${pageContext.request.contextPath}/admin" method="post">
+                <input type="hidden" name="userId" value="${user.id}"/>
+                <input type="hidden" name="action" value="delete"/>
+                <button type="submit">Delete</button>
             </form>
         </td>
     </tr>
 
-
-
-
-
-<div>
-    <form action="/logout" method="post">
-        <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
-        <input type="submit" value="Sign out"/>
-    </form>
-</div>
+    <div>
+        <form action="/logout" method="post">
+            <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
+            <input type="submit" value="Sign out"/>
+        </form>
+    </div>
 </table>
 </body>
 </html>

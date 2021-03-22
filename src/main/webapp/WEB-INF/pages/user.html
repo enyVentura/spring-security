@@ -4,8 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>User Page</title>
-    <style>table th, table td {padding: 5px;}</style>
+    <style>table th, table td {
+        padding: 5px;
+    }</style>
 </head>
+
 <body>
 <h1>Users:</h1>
 <table border="1">
@@ -23,14 +26,12 @@
         <td th:utext="${User.lastName}">Last Name</td>
     </tr>
 
-
-
-<div>
-    <form action="/logout" method="post">
-        <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
-        <input type="submit" value="Sign out"/>
-    </form>
-</div>
+    <div>
+        <form action="/logout" method="post">
+            <input type="hidden" name="_csrf" value="{{_csrf.token}}"/>
+            <input type="submit" value="Sign out"/>
+        </form>
+    </div>
 
 </table>
 </body>
