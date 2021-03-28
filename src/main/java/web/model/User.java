@@ -1,4 +1,8 @@
 package web.model;
+/**
+ * This page description model of Users
+ * @author Eugene Kashitsyn
+ */
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +16,7 @@ import java.util.Set;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "username")
     private String username;
@@ -26,21 +30,19 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Transient
-    private String confirmPassword;
-
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "User_id"),
+            inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles;
 
     public User() {
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -58,14 +60,6 @@ public class User implements UserDetails {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
     }
 
     public void setRoles(Set<Role> roles) {
@@ -119,8 +113,4 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + " (id:" + id + " username:" + username + "firstname" + firstName + " lastname:" + lastName + ")";
-    }
 }

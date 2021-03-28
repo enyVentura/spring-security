@@ -1,4 +1,8 @@
 package web.config;
+/**
+ * This page description my JPA settings
+ * @author Eugene Kashitsyn
+ */
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,17 +53,6 @@ private UserService userService;
         authenticationProvider.setUserDetailsService(userService);
         return authenticationProvider;
     }
-
-
-
-
-
-
-
-
-
-
-
 
     private static final Logger logger = LoggerFactory.getLogger(HibernateConfig.class);
     private Environment environment;

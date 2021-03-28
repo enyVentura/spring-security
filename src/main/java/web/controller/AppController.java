@@ -1,18 +1,17 @@
 package web.controller;
+/**
+ *
+ * @author Eugene Kashitsyn
+ */
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+
 import web.model.User;
 import web.service.UserService;
-
-import javax.validation.Valid;
 
 @Controller
 public class AppController {
@@ -41,49 +40,37 @@ public class AppController {
         return "user";
     }
 
-    @PostMapping("/admin")
-    public String  deleteUser(@RequestParam(required = true, defaultValue = "" ) Long userId,
-                              @RequestParam(required = true, defaultValue = "" ) String action,
-                              Model model) {
-        if (action.equals("delete")){
-            userService.deleteById(userId);
-        }
+    @GetMapping(value = "/registration")
+    public String addUser(ModelMap modelMap) {
+        modelMap.addAttribute("addUser", new User());
+        modelMap.addAttribute("allRoles", userService.getAllRoles());
+        return "registration";
+    }
+
+    @PostMapping(value = "/registration")
+    public String addUserById(@ModelAttribute("addUser") User user,
+                            @RequestParam(value = "select_role", required = false) String[] role) {
+        userService.update(user,role);
         return "redirect:/admin";
     }
 
-    @GetMapping("/registration")
-    public ModelAndView registration(){
-        ModelAndView modelAndView = new ModelAndView();
-        User user = new User();
-        modelAndView.addObject("user", user);
-        modelAndView.setViewName("registration");
-        return modelAndView;
+    @GetMapping("/{id}/edit")
+    public String edit(@PathVariable("id") Integer id, ModelMap modelMap) {
+        modelMap.addAttribute("user", userService.findById(id));
+        modelMap.addAttribute("allRoles", userService.getAllRoles());
+        return "edit";
     }
 
-    @PostMapping("/registration")
-    public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
-        ModelAndView modelAndView = new ModelAndView();
-        User userExists = userService.findByUserName(user.getUsername());
-        if (userExists != null) {
-            bindingResult
-                    .rejectValue("userName", "error.user",
-                            "There is already a user registered with the user name provided");
-        }
-        if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("registration");
-        }
-        if (userService.saveUser(user)) {
-            modelAndView.addObject("successMessage", "User has been registered successfully");
-            modelAndView.addObject("user", new User());
-            modelAndView.setViewName("registration");
-        }
-            return modelAndView;
-
+    @PatchMapping("/{id}")
+    public String update(@ModelAttribute("user") User user,
+                         @RequestParam(value = "select_roles", required = false) String[] role) {
+        userService.update(user,role);
+        return "redirect:/admin";
     }
 
-    @GetMapping("/admin/gt/{userId}")
-    public String  gtUser(@PathVariable("userId") Long userId, Model model) {
-        model.addAttribute("allUsers", userService.findById(userId));
-        return "admin";
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable("id") Integer id) {
+        userService.deleteById(id);
+        return "redirect:/admin";
     }
 }

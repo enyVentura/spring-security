@@ -1,19 +1,18 @@
 package web.config;
+/**
+ * This page description Security config
+ *
+ * @author Eugene Kashitsyn
+ */
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import web.config.handler.LoginSuccessHandler;
-//import web.service.MyUserDetailsService;
 import web.service.UserService;
 
 @Configuration
@@ -33,16 +32,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.loginSuccessHandler = loginSuccessHandler;
     }
 
-    /*public SecurityConfig(LoginSuccessHandler loginSuccessHandler) {
-        this.loginSuccessHandler = loginSuccessHandler;
-    }*/
-
-   @Autowired
-   BCryptPasswordEncoder cryptPasswordEncoder;
+    @Autowired
+    BCryptPasswordEncoder cryptPasswordEncoder;
 
     @Autowired
-    protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception{
-        //auth.userDetailsService(userService).passwordEncoder(NoOpPasswordEncoder.getInstance());
+    protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService).passwordEncoder(cryptPasswordEncoder);
     }
 

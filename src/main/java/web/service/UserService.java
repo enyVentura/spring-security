@@ -1,4 +1,8 @@
 package web.service;
+/**
+ * This description my service methods
+ * @author Eugene Kashitsyn
+ */
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -54,53 +58,46 @@ public class UserService implements UserDetailsService {
         return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
     }
 
+                    /**Next following my users methods**/
+
     public User findByUserName(String username) {
         return userRepository.findByUsername(username);
-    }
-
-    public boolean saveUser(User user) {
-        User userFromDB = userRepository.findByUsername(user.getUsername());
-        if (userFromDB != null) {
-            return false;
-        }
-        user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
-        user.setPassword(cryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return true;
     }
 
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    public void deleteById(Long userId) {
-        if (userRepository.findById(userId).isPresent()) {
-            userRepository.deleteById(userId);
+    public User findById(Integer id) {
+        Optional<User> userFromDB = userRepository.findById(id);
+        return userFromDB.get();
+    }
+
+    public Role findByIdRole(Integer id){
+        Optional<Role> roleFromDB=roleRepository.findById(id);
+        return roleFromDB.get();
+    }
+
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll();
+    }
+
+    public void update(User user, String[] role) {
+        Set<Role> rol = new HashSet<>();
+        for (String s : role) {
+            if (s.equals("ROLE_ADMIN")) {
+                rol.add(findByIdRole(2));
+            } else {
+                rol.add(findByIdRole(1));
+            }
         }
+        user.setRoles(rol);
+        user.setPassword(cryptPasswordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+    }
+
+    public void deleteById(Integer userId) {
         userRepository.deleteById(userId);
     }
-
-
-    public User findById(Long id) {
-        Optional<User> userFromDB = userRepository.findById(id);
-        return userFromDB.orElse(new User());
-    }
-
-
-
-
-
-    /*private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
-        Set<GrantedAuthority> roles = new HashSet<>();
-        for (Role role : userRoles) {
-            roles.add(new SimpleGrantedAuthority(role.getName()));
-        }
-        return new ArrayList<>(roles);
-    }
-
-
-    private UserDetails buildUserForAuthentication(User user, List<GrantedAuthority> authorities) {
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),true, true, true, true, authorities);
-    }*/
 
 }

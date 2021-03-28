@@ -15,15 +15,16 @@ CREATE TABLE roles(
 )
 ENGINE =InnoDB;
 
--- Table for mapping user id roles: user_roles
-CREATE TABLE user_roles(
+-- Table for mapping user id roles: users_roles
+CREATE TABLE users_roles(
     user_id INT NOT NULL ,
     role_id INT NOT NULL ,
     FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (role_id) REFERENCES roles (id),
-    UNIQUE (user_id,role_id)
+    FOREIGN KEY (role_id) REFERENCES roles (id)
 )
 ENGINE =InnoDB;
-INSERT INTO users VALUES (1,'proselyte','$2a$10$eaGEmyIIj.S/3uRnFIuBcO5LoTz8D9iY/aYW6uEXe61b81V7O3Ff.'); #3157860
+INSERT INTO users VALUES ('user','userFirstName','userLastName','$2y$12$OZRyaSKiTsKwELNgZNZr8e6qj9sEq34NUJxTRdEvcybjjKxUDcUaG'); #123
+INSERT INTO users VALUES ('admin','adminFirstName','adminLastName','$2y$12$OZRyaSKiTsKwELNgZNZr8e6qj9sEq34NUJxTRdEvcybjjKxUDcUaG'); #123
 INSERT INTO roles VALUES (1,'ROLE_USER');
-INSERT INTO user_roles VALUES (1,2);
+INSERT INTO roles VALUES (2,'ROLE_ADMIN');
+INSERT INTO users_roles VALUES (1,2);
